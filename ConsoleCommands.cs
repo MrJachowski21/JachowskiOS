@@ -1,4 +1,5 @@
 using Cosmos.Core_Asm;
+using JachowskiOS.System;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -17,6 +18,11 @@ namespace JachowskiOS.System
             string[] words = command.Split(' ');
             if (words.Length > 0)
             {
+                 if (words[0] == "calculator")
+                {
+                    Calculator.RunCalculator();
+                }
+
                 if (words[0].ToLower() == "clock")
                 {
                     Clock.Start();
@@ -41,6 +47,7 @@ namespace JachowskiOS.System
                     Console.WriteLine(WriteMessage.CenterText(Kernel.Version));
                     Console.WriteLine(WriteMessage.CenterText("Created by Jachowski System "));
                     Console.ForegroundColor = ConsoleColor.White;
+
                 }
                 else if (words[0] == "help")
                 {
@@ -53,6 +60,9 @@ namespace JachowskiOS.System
                     Console.WriteLine("- cat <file>: Display the contents of a file");
                     Console.WriteLine("- del <file>: Delete a file");
                     Console.WriteLine("- mkdir <directory>: Create a new directory");
+                    Console.WriteLine("- time: see actual time");
+                    Console.WriteLine("- clock: stoper");
+                    Console.WriteLine("- calculator: calculator");
                 }
 
 
@@ -273,6 +283,74 @@ namespace JachowskiOS.System
                     Console.WriteLine($"Time: {hours.ToString("00")}:{minutes.ToString("00")}:{seconds.ToString("00")}");
                 }
             }
+        }
+    }
+}
+
+public static class Calculator
+{
+    public static void RunCalculator()
+    {
+        Console.ForegroundColor = ConsoleColor.Magenta;
+        Console.WriteLine(WriteMessage.CenterText("Welcome to JachowskiOS Calculator!"));
+        Console.WriteLine(WriteMessage.CenterText("Type 'exit' to quit the calculator."));
+        Console.WriteLine(WriteMessage.CenterText("Usage: <number> <operation> <number>"));
+        Console.WriteLine(WriteMessage.CenterText("Supported operations: +, -, *, /"));
+
+        while (true)
+        {
+            Console.Write("> ");
+            string input = Console.ReadLine();
+
+            if (input.ToLower() == "exit")
+            {
+                WriteMessage.WriteWarn("Exiting calculator...");
+                break;
+            }
+
+            string[] elements = input.Split(' ');
+
+            if (elements.Length != 3)
+            {
+                Console.WriteLine("Invalid input! Please provide two numbers and an operation.");
+                continue;
+            }
+
+            if (!double.TryParse(elements[0], out double num1) || !double.TryParse(elements[2], out double num2))
+            {
+                Console.WriteLine("Invalid numbers! Please provide valid numerical values.");
+                continue;
+            }
+
+            string operation = elements[1];
+
+            double result = 0;
+
+            switch (operation)
+            {
+                case "+":
+                    result = num1 + num2;
+                    break;
+                case "-":
+                    result = num1 - num2;
+                    break;
+                case "*":
+                    result = num1 * num2;
+                    break;
+                case "/":
+                    if (num2 == 0)
+                    {
+                        Console.WriteLine("Cannot divide by zero!");
+                        continue;
+                    }
+                    result = num1 / num2;
+                    break;
+                default:
+                    Console.WriteLine("Unsupported operation! Please use '+', '-', '*', or '/'.");
+                    continue;
+            }
+
+            Console.WriteLine($"Result: {result}");
         }
     }
 }
