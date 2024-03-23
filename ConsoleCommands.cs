@@ -17,6 +17,23 @@ namespace JachowskiOS.System
             string[] words = command.Split(' ');
             if (words.Length > 0)
             {
+                if (words[0].ToLower() == "clock")
+                {
+                    Clock.Start();
+                    return;
+                }
+                else if (words[0].ToLower() == "time")
+                {
+                    ShowTime();
+                    return;
+                }
+            }
+            if (words[0] == "time")
+                {
+                    Clock.Start();
+                    return;
+                }
+            {
                 if (words[0] == "info")
                 {
                     Console.ForegroundColor = ConsoleColor.Cyan;
@@ -37,6 +54,7 @@ namespace JachowskiOS.System
                     Console.WriteLine("- del <file>: Delete a file");
                     Console.WriteLine("- mkdir <directory>: Create a new directory");
                 }
+
 
                 else if (words[0] == "format")
                 {
@@ -124,6 +142,7 @@ namespace JachowskiOS.System
                     }
                     else
                         WriteMessage.WriteError("Invalid Syntax!");
+
                 }
                 else if (words[0] == "del")//Usuwamy plik
                 {
@@ -195,17 +214,65 @@ namespace JachowskiOS.System
                     else
                         Kernel.Path = @"0:\";
 
-
-
                 }
                 else
                 {
                     WriteMessage.WriteError("Please enter a vaild command!");
+                    { }
                 }
+            }
+        }
+        private static void ShowTime()
+        {
+            DateTime currentTime = DateTime.Now;
+            Console.WriteLine($"Current time: {currentTime.ToString("HH:mm:ss")}");
+        }
+        public static class Clock
+        {
+            private static bool running = false;
+            private static int seconds = 0;
+            private static int minutes = 0;
+            private static int hours = 0;
 
+            public static void Start()
+            {
+                running = true;
+                seconds = 0;
+                minutes = 0;
+                hours = 0;
+                Console.WriteLine($"Clock started. Time: {hours.ToString("00")}:{minutes.ToString("00")}:{seconds.ToString("00")}");
+                UpdateClock();
+            }
+
+            public static void Stop()
+            {
+                running = false;
+                Console.WriteLine("Clock stopped.");
+            }
+
+            public static void UpdateClock()
+            {
+                while (running)
+                {
+                    Thread.Sleep(1000);
+                    seconds++;
+                    if (seconds == 60)
+                    {
+                        seconds = 0;
+                        minutes++;
+                        if (minutes == 60)
+                        {
+                            minutes = 0;
+                            hours++;
+                            if (hours == 24)
+                            {
+                                hours = 0;
+                            }
+                        }
+                    }
+                    Console.WriteLine($"Time: {hours.ToString("00")}:{minutes.ToString("00")}:{seconds.ToString("00")}");
+                }
             }
         }
     }
 }
-
-
