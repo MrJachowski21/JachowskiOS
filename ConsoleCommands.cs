@@ -3,11 +3,13 @@ using JachowskiOS.System;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace JachowskiOS.System
 {
@@ -18,7 +20,7 @@ namespace JachowskiOS.System
             string[] words = command.Split(' ');
             if (words.Length > 0)
             {
-                 if (words[0] == "calculator")
+                if (words[0] == "calculator")
                 {
                     Calculator.RunCalculator();
                 }
@@ -33,14 +35,7 @@ namespace JachowskiOS.System
                     ShowTime();
                     return;
                 }
-            }
-            if (words[0] == "time")
-                {
-                    Clock.Start();
-                    return;
-                }
-            {
-                if (words[0] == "info")
+                else if (words[0] == "info")
                 {
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.WriteLine(WriteMessage.CenterText("JachowskiOS"));
@@ -62,10 +57,8 @@ namespace JachowskiOS.System
                     Console.WriteLine("- mkdir <directory>: Create a new directory");
                     Console.WriteLine("- time: see actual time");
                     Console.WriteLine("- clock: stoper");
-                    Console.WriteLine("- calculator: calculator");
+                    Console.WriteLine("- c");
                 }
-
-
                 else if (words[0] == "format")
                 {
                     if (Kernel.fs.Disks[0].Partitions.Count > 0)
@@ -84,6 +77,19 @@ namespace JachowskiOS.System
                 {
                     long free = Kernel.fs.GetAvailableFreeSpace(Kernel.Path);
                     Console.Write("Free space: " + free / 1024 + "kb");
+                }
+                if (words[0].ToLower() == "notepad")
+                {
+                    if (words.Length > 1)
+                    {
+                        string fileName = words[1];
+                        Notepad.OpenOrCreateFile(fileName);
+                    }
+                    else
+                    {
+                        WriteMessage.WriteError("Please provide a filename.");
+                    }
+                    return;
                 }
                 else if (words[0] == "dir")
                 {
@@ -223,14 +229,34 @@ namespace JachowskiOS.System
                     }
                     else
                         Kernel.Path = @"0:\";
-
                 }
+                else if (words[0].ToLower() == "calendar")
+                {
+                    DateTime currentDate = DateTime.Now;
+                    int currentYear = currentDate.Year;
+                    int currentMonth = currentDate.Month;
+                    Calendar.ShowCalendar(currentYear, currentMonth);
+                    return;
+                }
+                else if (words[0] == "shutdown")
+                {
+                    WriteMessage.WriteWarn("Shutting down JachowskiOS...");
+                    Thread.Sleep(2000); // Odczekaj 2 sekundy przed wyłączeniem
+                    Cosmos.System.Power.Shutdown();
+                }
+
                 else
                 {
-                    WriteMessage.WriteError("Please enter a vaild command!");
-                    { }
+                    WriteMessage.WriteError("Please enter a valid command!");
                 }
+
+
             }
+
+
+
+
+
         }
         private static void ShowTime()
         {
