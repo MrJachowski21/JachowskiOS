@@ -9,7 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Globalization;
 
 namespace JachowskiOS.System
 {
@@ -20,16 +19,28 @@ namespace JachowskiOS.System
             string[] words = command.Split(' ');
             if (words.Length > 0)
             {
-                if (words[0] == "calculator")
+                if (words[0].ToLower() == "shutdown")
+                {
+                    ShutdownSystemCommand.ShutdownSystem();
+                }
+                else if (words[0].ToLower() == "reset")
+                {
+                    ResetSystemCommand.ResetSystem();
+                }
+                else if (words[0] == "calculator")
                 {
                     Calculator.RunCalculator();
                 }
-
-                if (words[0].ToLower() == "clock")
+                else if (words[0] == "disc")
+                {
+                    DiskSpaceCommand.DisplayAvailableDiskSpace();
+                }
+                else if (words[0].ToLower() == "clock")
                 {
                     Clock.Start();
                     return;
                 }
+
                 else if (words[0].ToLower() == "time")
                 {
                     ShowTime();
@@ -49,7 +60,7 @@ namespace JachowskiOS.System
                     Console.WriteLine("Available commands:");
                     Console.WriteLine("- info: Display system information");
                     Console.WriteLine("- format: Format the disk");
-                    Console.WriteLine("- space: Check available free space");
+                    Console.WriteLine("- space: Check available free space (no available)");
                     Console.WriteLine("- dir: List directories and files in the current directory");
                     Console.WriteLine("- echo <text> > <file>: Write text to a file");
                     Console.WriteLine("- cat <file>: Display the contents of a file");
@@ -57,7 +68,8 @@ namespace JachowskiOS.System
                     Console.WriteLine("- mkdir <directory>: Create a new directory");
                     Console.WriteLine("- time: see actual time");
                     Console.WriteLine("- clock: stoper");
-                    Console.WriteLine("- c");
+                    Console.WriteLine("- calculator: open calculator");
+                    Console.WriteLine("- disc: Check available free space in GB");
                 }
                 else if (words[0] == "format")
                 {
@@ -78,7 +90,7 @@ namespace JachowskiOS.System
                     long free = Kernel.fs.GetAvailableFreeSpace(Kernel.Path);
                     Console.Write("Free space: " + free / 1024 + "kb");
                 }
-                if (words[0].ToLower() == "notepad")
+                else if (words[0].ToLower() == "notepad")
                 {
                     if (words.Length > 1)
                     {
@@ -229,6 +241,7 @@ namespace JachowskiOS.System
                     }
                     else
                         Kernel.Path = @"0:\";
+
                 }
                 else if (words[0].ToLower() == "calendar")
                 {
@@ -238,13 +251,6 @@ namespace JachowskiOS.System
                     Calendar.ShowCalendar(currentYear, currentMonth);
                     return;
                 }
-                else if (words[0] == "shutdown")
-                {
-                    WriteMessage.WriteWarn("Shutting down JachowskiOS...");
-                    Thread.Sleep(2000); // Odczekaj 2 sekundy przed wyłączeniem
-                    Cosmos.System.Power.Shutdown();
-                }
-
                 else
                 {
                     WriteMessage.WriteError("Please enter a valid command!");
@@ -252,6 +258,7 @@ namespace JachowskiOS.System
 
 
             }
+
 
 
 
